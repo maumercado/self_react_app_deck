@@ -1,7 +1,7 @@
-export { notes as theme } from "@mdx-deck/themes"
+export { yellow as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
+import { Notes } from 'mdx-deck'
 import { Split } from "@mdx-deck/layouts"
-
 
 
 
@@ -9,8 +9,14 @@ import { Split } from "@mdx-deck/layouts"
 
 #### by: Mauricio Mercado
 
----
+<Notes>
+Important grasp the knowledge!
+Who has use CRA before?
+Who has ejected an application?
+Who has built a CLI with node before?
+</Notes>
 
+---
 
 ### $(whoami)
 
@@ -21,12 +27,23 @@ import { Split } from "@mdx-deck/layouts"
 
 #### maumercado <SocialFollow />
 
+<Notes>You can follow me in social media, I'm maumercado in all of them</Notes>
+
 ---
 
 ## What this talk is about
 
 - Overview of create react components
 - _Building your own!_
+
+
+<Notes>
+Demistifying create-react-app after all you can create your own.
+Why would you do that?
+</Notes>
+
+
+
 
 ---
 
@@ -46,7 +63,6 @@ The nitty gritty details of each component of CRA
 - Babel
 - Webpack (HMR)
 - Linter
--
 - Tests Configured
 
 ---
@@ -59,8 +75,23 @@ A simplified **_ejected_** version of CRA
 
 ---
 
+# Time for a DEMO
+
+![I got time](https://media.giphy.com/media/4y0hL2EY2aUIE/giphy.gif)
+
+---
+
 # How come I get such a small amount of files?
 react-scripts 🔍
+
+---
+# What's next?
+
+- self-scripts
+  - hide all the configs (standard.js?)
+- Typescript support
+- styled components support
+
 
 
 
