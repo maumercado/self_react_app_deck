@@ -1,7 +1,10 @@
-export { yellow as theme } from "@mdx-deck/themes"
+export { future as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
 import CenteredImage from "./components/CenteredImage"
-import { Notes } from 'mdx-deck'
+import { Appear, Notes  } from "mdx-deck";
+import { CodeSurferLayout } from "code-surfer";
+import {} from "code-surfer"
+const chalk = require('chalk');
 
 
 ## Create your own "create-react-app"
@@ -38,9 +41,14 @@ developer experience and evaluating the technologies used at telus.
 
 ## What this talk is about
 
-- High overview of create react app components
-- _Building your own!_
-
+<div>
+  <ul>
+    <Appear>
+      <li>High overview of create react app components</li>
+      <li><b><i>Building your own!</i></b></li>
+    </Appear>
+  </ul>
+</div>
 
 <Notes>
   We are going to be talking about CRA.
@@ -70,11 +78,17 @@ The nitty gritty details of each component of CRA
 
 # What composes CRA?
 
-- Babel (Transpilation)
-- Webpack (HMR)
-- Linter
-- Tests Configured
-- react-scripts
+<div>
+  <ul>
+    <Appear>
+      <li>Babel (Transpilation)</li>
+      <li>Webpack (HMR)</li>
+      <li>Linter</li>
+      <li>Tests Configured</li>
+      <li>react-scripts</li>
+    </Appear>
+  </ul>
+</div>
 
 
 <Notes>
@@ -96,7 +110,6 @@ The nitty gritty details of each component of CRA
 
 
 ---
-
 
 
 # Why create your own generator CLI?
@@ -149,12 +162,246 @@ The nitty gritty details of each component of CRA
 
 # Time for a DEMO
 
-<CenteredImage height={230} width={405} src={require("file-loader!./images/Igtft.gif")} />
+<CenteredImage
+  height={230}
+  width={405}
+  src={require("file-loader!./images/Igtft.gif")}
+/>
 
 <Notes>
   do npx self-react-app
   explore files
 </Notes>
+
+---
+
+
+# Let's see some code
+
+
+---
+
+<CodeSurferLayout>
+
+```js title=""
+
+const program = new commander.Command(packageJson.name)
+  .version(packageJson.version)
+  .arguments('<project directory>')
+  .usage(`${chalk.green('<project-directory>')} [options]`)
+  .action((name) => {
+    projectName = name;
+  })
+  .allowUnknownOption()
+  .on('--help', () => {
+    log(`    Only ${chalk.green('<project-directory>')} is required.`);
+    log();
+  })
+  .parse(process.argv);
+
+
+```
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+createApp(projectName);
+
+```
+
+```js 1:11
+
+const createApp = (name) => {
+  // Project root directory
+  const root = path.resolve(name);
+
+  checkAppName(name);
+  fs.ensureDirSync(name);
+
+  log(`Creating a new React app in ${chalk.green(root)}.`);
+  log();
+  executeCreation(root, name);
+};
+
+createApp(projectName);
+
+```
+
+```js 10
+
+const createApp = (name) => {
+  // Project root directory
+  const root = path.resolve(name);
+
+  checkAppName(name);
+  fs.ensureDirSync(name);
+
+  log(`Creating a new React app in ${chalk.green(root)}.`);
+  log();
+  executeCreation(root, name);
+};
+
+createApp(projectName);
+
+```
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js 11:18
+
+const executeCreation = async (root, appName) => {
+  const spinner = new Ora({
+    text: "Initializing project with npm init",
+    spinner: "boxBounce2",
+  });
+
+  try {
+    const deps = getProperDeps(originalPackageJSON.dependencies);
+    const devDeps = getProperDeps(originalPackageJSON.devDependencies);
+
+    await createValidPackageJson(appName, spinner);
+    await addPackagesAndConfigToPackageJson(root, spinner);
+
+    await npmInstallPackages(root, deps, true, spinner);
+    await npmInstallPackages(root, devDeps, false, spinner);
+
+    await setupRepo(root, spinner);
+    await copyReactTemplateApp(root, appName, spinner);
+    log(
+      boxen("Your react application " + appName + "is ready to go!\n" +
+          "To start coding the app run: cd " + appName + "\n" +
+          "To start executing the application run: npm run start\n" +
+          "To start executing the application tests run: npm run test"
+        ,
+        { padding: 1, borderStyle: 'doubleSingle', align: 'center' }),
+    );
+  } catch (err) {
+    execSync("rm -rf " + appName);
+    process.exit(1);
+  }
+};
+
+```
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+const createValidPackageJson = async (appName, spinner) => {
+  spinner.start('Initializing package with npm');
+  await execAsync("cd "+ appName " && npm init -y");
+  spinner.succeed('npm init ran successfully');
+};
+```
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+const addPackagesAndConfigToPackageJson = async (root, spinner) => {
+  spinner.start('Adding configuration to npm package');
+  const packageLocation = "root" + "/package.json";
+  const packageJSON = await fs.readJSON(packageLocation);
+  const newPackageJSON = { ...packageJSON, scripts };
+  await fs.writeJSON(packageLocation, newPackageJSON, { spaces: 2 });
+  spinner.succeed('npm package configured');
+  return Promise.resolve();
+};
+
+```
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+const npmInstallPackages = async (root, deps, isDeps, spinner) => {
+  spinner.info("Initializing installation of " + isDeps ? "dependencies" : "devDependencies");
+  log();
+  const args = ['install', isDeps ? '--save' : '--save-dev'].concat(deps);
+
+  const msg = isDeps ? 'dependencies installed' : 'devDependencies installed';
+  const proc = spawnSync('npm', args, { stdio: 'inherit', cwd: root });
+
+  if (proc.status !== 0) {
+    throw new Error(proc.error);
+  }
+  spinner.succeed(msg);
+};
+
+```
+
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+const setupRepo = async (root, spinner) => {
+  spinner.start('Copying configuration files for react');
+  const filesToCopy = [
+    'README.md',
+    'webpack.config.js',
+    '.eslintrc.js',
+    '.babelrc',
+    'gitignore',
+    'jest.config.js',
+    '.stylelintrc'
+  ];
+
+  const promises = filesToCopy.map((file) => {
+    let dst = root + "/" + file;
+    if (file === 'gitignore') {
+      dst = root + "/." file
+    }
+    return fs.copy(path.join(__dirname, "../templates/" + file), dst);
+  });
+  await Promise.all(promises);
+  spinner.succeed('Configuration files copied');
+};
+
+```
+
+
+</CodeSurferLayout>
+
+---
+
+<CodeSurferLayout>
+
+```js
+
+const copyReactTemplateApp = async (root, appName, spinner) => {
+  spinner.start('Copying React application files');
+  await fs.copy(path.join(__dirname, "../templates/src"), appName+ "src");
+  spinner.succeed('React codebase ready to go!');
+};
+
+```
+
+</CodeSurferLayout>
 
 
 ---
@@ -164,78 +411,105 @@ A simplified **_ejected_** version of CRA
 
 SRA ~1700 packages installed
 
+CRA ~30000 packages installed
+
+
 <Notes>
+  Show generated react app
+
+  why does SRA have so many config files? how to hide them? react-scripts!
+
   Show repo https://github.com/maumercado
-</Notes>
 
-
----
-
-# How come I get such a small amount of files in CRA?
-
-## react-scripts 🔍
-
- CRA ~30000 packages installed
-
-<Notes>
   All things in javascript are object,
   even configuration files, so a lot of configuration files are
   actually contained/controlled by react-scripts, which hides them
   to the user but allows the project to use all those configurations
 </Notes>
 
+---
+
+# Creating the CLI
+
+<div>
+  <ul>
+    <Appear>
+      <li>Commanded for parsing args</li>
+      <li>Ora gives me the spinners</li>
+      <li>Boxen and Chalk adds a bit more ✨</li>
+    </Appear>
+  </ul>
+</div>
+
 
 ---
 
-# Tools Used
+# Bundled tools
 
-- commander (https://github.com/tj/commander.js/)
-- Ora (https://npm.im/ora)
-- Boxen (https://npm.im/boxen)
-- Chalk (https://npm.im/chalk)
-- Reach/Router
-- Babel NodeJS compatibility
+<div>
+  <ul>
+    <Appear>
+      <li>Webpack 4</li>
+      <li>Reach/Router</li>
+      <li>Jest</li>
+      <li>Babel</li>
+      <li>stylinter, eslint</li>
+      <li>... and other requirements for a react app.</li>
+    </Appear>
+  </ul>
+</div>
 
-
----
-
-# Tools used
-
-- Webpack 4
-- stylinter, eslint
-- semantic-release, commitizen, travisCI
-- ... and other requirements for a react app.
 
 ---
 
-# What's next?
+# Publishing
 
-- Generate your own server
-- Generate your project files 'A la RoR'
-- extendable self-scripts
-  - hide all the configs
-- Cross platform support
+<div>
+  <ul>
+    <Appear>
+      <li>Commitizen</li>
+      <li>Semantic Release</li>
+      <li>Travis CI</li>
+      <li>Add compatibility by using Babel</li>
+    </Appear>
+  </ul>
+</div>
 
 ---
 
-# What's next?
+# TODOs:
 
+- ... Yeah yeah.. tests 😅
+- Cross platform support (cross-env, rimraf, cross-spawn)
 - Typescript support
-- Generate application files
 - Update dependencies
 - Add webpack bundle profiler
-- Clearer README.md
+- Clearer README
 
-... Whatever you can imagine, it's your generator
+
+---
+
+# What's next?
+
+<div>
+  <ul>
+    <li>Generate application files via CLI</li>
+    <li>Generate your own server</li>
+    <li>Generate your project files 'A la RoR'</li>
+    <li>extendable self-scripts style</li>
+    <Appear>
+      <li>... Whatever you can imagine, it's your generator</li>
+    </Appear>
+  </ul>
+</div>
 
 ---
 
 # Thank you
 
-### Repo code: https://github.com/maumercado/self_react_app_cli
+Repo code:
+
+  https://github.com/maumercado/self_react_app_cli
 
 #### maumercado <SocialFollow />
-
-<Notes>You can follow me in social media, I'm maumercado in all of them</Notes>
-
 ###### _**Coming soon: maumercado.com**_
