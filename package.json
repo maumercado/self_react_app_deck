@@ -16,13 +16,14 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-react": "^7.13.0",
-    "eslint-plugin-react-hooks": "^1.6.0",
-    "mdx-deck": "^2.3.2"
+    "eslint-plugin-react-hooks": "^1.6.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/free-brands-svg-icons": "^5.9.0",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "file-loader": "^4.0.0",
+    "mdx-deck": "^2.3.2",
     "react": "^16.8.6",
     "styled-components": "^4.3.1"
   }

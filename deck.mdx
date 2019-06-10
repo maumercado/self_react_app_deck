@@ -1,5 +1,6 @@
 export { yellow as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
+import CenteredImage from "./components/CenteredImage"
 import { Notes } from 'mdx-deck'
 
 
@@ -96,9 +97,11 @@ The nitty gritty details of each component of CRA
 
 ---
 
+
+
 # Why create your own generator CLI?
 
-![Nobody got time](./images/angtft.gif)
+<CenteredImage height={230} width={405} src={require("file-loader!./images/angtft.gif")} />
 
 <Notes>
   Customization to make developers life easy!
@@ -146,7 +149,7 @@ The nitty gritty details of each component of CRA
 
 # Time for a DEMO
 
-![I got time](./images/Igtft.gif)
+<CenteredImage height={230} width={405} src={require("file-loader!./images/Igtft.gif")} />
 
 <Notes>
   do npx self-react-app
