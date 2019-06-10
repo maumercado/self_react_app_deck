@@ -1,8 +1,6 @@
 export { yellow as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
 import { Notes } from 'mdx-deck'
-import { Split } from "@mdx-deck/layouts"
-
 
 
 ## Create your own "create-react-app"
@@ -21,28 +19,32 @@ Who has built a CLI with node before?
 ### $(whoami)
 
   - Working For Telus Digital
-  - React Developer since 2016
-  - NodeJS Developer since 2014
+  - Lots of JS (React, NodeJS)
+  - Creator of 🐞since 2010
   - Originally from 🇨🇴
 
-#### maumercado <SocialFollow />
 
-<Notes>You can follow me in social media, I'm maumercado in all of them</Notes>
+<Notes>
+Hello all,
+My name, blah blah, I've been creating bugs since 2010, probably sooner as a sysadmin
+being professionally developing stuff since 2010, started with python/django RoR
+and eventually found NodeJS then react.
+Working at Telus Digital for a the team responsible of creating the tools for
+developer experience and evaluating the technologies used at telus.
+</Notes>
 
 ---
 
 ## What this talk is about
 
-- Overview of create react components
+- High overview of create react app components
 - _Building your own!_
 
 
 <Notes>
-Demistifying create-react-app after all you can create your own.
-Why would you do that?
+  We are going to be talking about CRA.
+  The non-magic inside of create-react-app after all you can create your own.
 </Notes>
-
-
 
 
 ---
@@ -50,6 +52,12 @@ Why would you do that?
 ## What is not about
 
 The nitty gritty details of each component of CRA
+
+<Notes>
+  We are not going to discuss the specifics about babel, or webpack,
+  nor about performance gains/losses, we are simply focusing on the
+  cli that we are building
+</Notes>
 
 ---
 
@@ -59,39 +67,172 @@ The nitty gritty details of each component of CRA
 
 ---
 
-# So what composes CRA
-- Babel
+# What composes CRA?
+
+- Babel (Transpilation)
 - Webpack (HMR)
 - Linter
 - Tests Configured
+- react-scripts
+
+
+<Notes>
+  Babel - transpiles ES6 unsupported by browser to syntax the browser understands
+  ES2015+ dynamic imports, spread objects, classes async/await, typescript|flow
+
+  Webpack - minimifies, uglifies, tree shaking, bundling
+
+  Linters style-guides and avoid errors
+
+  Jest already out of the box
+
+  React-scripts (holds the app structure template and also a lot of configurations
+
+  This tools makes our life so easy in order to start a react app
+  because it does many choices for us as devs (javascript fatigue,
+  and analysis paralysis).
+</Notes>
+
 
 ---
-<!-- This could be at the end of the CLI demo -->
-# Self React app
 
-A simplified **_ejected_** version of CRA
-##### (but that's just the beginning)
-<!-- Talk about the possibilities here -->
+# Why create your own generator CLI?
+
+![Nobody got time](./images/angtft.gif)
+
+<Notes>
+  Customization to make developers life easy!
+
+  We do a lot of that at Telus.
+
+  What would happen if one of the packages has a vulnerability?
+
+  What if you want to go the extra mile and stop bundling your project with what
+  you don't need.
+
+  Eventually we come up with a standard boilerplate if we are using redux, or
+  the context api or any other lib that we add to our Created react app, and
+  copy and paste a lot of stuff... and keep in mind that a good developer is a
+  lazy developer -> we automate all the stuff that we can.
+</Notes>
+
+
+---
+
+# Why create your own generator CLI?
+
+## Why not?
+
+<Notes>
+  And in all honesty. because WHY NOT!
+
+  You get to learn a ton about the underlying technology!
+
+  Babel is not only for CRA, it's also used in the CLI I built
+
+  Webpack is actually pretty cool, and if you want to optimize the size
+  of your build, well what better tool than webpack itself.
+
+  Streamline your work?
+
+  Lighten the amount of packages your custom built depends on.
+
+  Don't like CRA rules by default and always copy paste your own, build your own
+  CRA (ok this might be an overkill reason but you get the idea 😏 )
+
+</Notes>
 
 ---
 
 # Time for a DEMO
 
-![I got time](https://media.giphy.com/media/4y0hL2EY2aUIE/giphy.gif)
+![I got time](./images/Igtft.gif)
+
+<Notes>
+  do npx self-react-app
+  explore files
+</Notes>
+
 
 ---
 
-# How come I get such a small amount of files?
-react-scripts 🔍
+A simplified **_ejected_** version of CRA
+##### (but that's just the beginning)
+
+~SRA ~1700 packages installed
+
+<Notes>
+  Show repo https://github.com/maumercado
+</Notes>
+
 
 ---
+
+# How come I get such a small amount of files in CRA?
+
+## react-scripts 🔍
+
+ CRA ~30000 packages installed
+
+<Notes>
+  All things in javascript are object,
+  even configuration files, so a lot of configuration files are
+  actually contained/controlled by react-scripts, which hides them
+  to the user but allows the project to use all those configurations
+</Notes>
+
+
+---
+
+# Tools Used
+
+- commander (https://github.com/tj/commander.js/)
+- Ora (https://npm.im/ora)
+- Boxen (https://npm.im/boxen)
+- Chalk (https://npm.im/chalk)
+- Reach/Router
+- Babel NodeJS compatibility
+
+
+---
+
+# Tools used
+
+- Webpack 4
+- stylinter, eslint
+- semantic-release, commitizen, travisCI
+- ... and other requirements for a react app.
+
+---
+
 # What's next?
 
-- self-scripts
-  - hide all the configs (standard.js?)
+- Generate your own server
+- Generate your project files 'A la RoR'
+- extendable self-scripts
+  - hide all the configs
+- Cross platform support
+
+---
+
+# What's next?
+
 - Typescript support
-- styled components support
+- Generate application files
+- Update dependencies
+- Add webpack bundle profiler
+- Clearer README.md
 
+... Whatever you can imagine, it's your generator
 
+---
 
+# Thank you
 
+### Repo code: https://github.com/maumercado/self_react_app_cli
+
+#### maumercado <SocialFollow />
+
+<Notes>You can follow me in social media, I'm maumercado in all of them</Notes>
+
+###### _**Coming soon: maumercado.com**_
