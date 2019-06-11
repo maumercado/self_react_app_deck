@@ -2,8 +2,8 @@ export { future as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
 import CenteredImage from "./components/CenteredImage"
 import { Appear, Notes  } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
 import { CodeSurferLayout } from "code-surfer";
-import {} from "code-surfer"
 const chalk = require('chalk');
 
 
@@ -22,18 +22,22 @@ Who has built a CLI with node before?
 
 ### $(whoami)
 
-  - Working For Telus Digital
-  - Lots of JS (React, NodeJS)
-  - Creator of 🐞since 2010
-  - Originally from 🇨🇴
-
+<div>
+  <ul>
+    <Appear>
+      <li>Originally from 🇨🇴</li>
+      <li>Creator of 🐞since 2010</li>
+      <li>Lots of JS (React, NodeJS)</li>
+      <li>Working For Telus Digital</li>
+    </Appear>
+  </ul>
+</div>
 
 <Notes>
-Hello all,
-My name, blah blah, I've been creating bugs since 2010, probably sooner as a sysadmin
-being professionally developing stuff since 2010, started with python/django RoR
-and eventually found NodeJS then react.
-Working at Telus Digital for a the team responsible of creating the tools for
+name
+creating bugs, python, ror
+javascript nodejs react
+Work Telus Digital team responsible creating the tools for
 developer experience and evaluating the technologies used at telus.
 </Notes>
 
@@ -44,29 +48,19 @@ developer experience and evaluating the technologies used at telus.
 <div>
   <ul>
     <Appear>
-      <li>High overview of create react app components</li>
-      <li><b><i>Building your own!</i></b></li>
+      <li><b>Building your own CLI!</b></li>
+      <li>Let's create our own CRA as an example</li>
     </Appear>
   </ul>
 </div>
 
 <Notes>
-  We are going to be talking about CRA.
-  The non-magic inside of create-react-app after all you can create your own.
+  High overview of how to build a CLI and publish it to npm
+  Why copy CRA?
+  Lot of things to learn
+  Babel, webpack etc
 </Notes>
 
-
----
-
-## What is not about
-
-The nitty gritty details of each component of CRA
-
-<Notes>
-  We are not going to discuss the specifics about babel, or webpack,
-  nor about performance gains/losses, we are simply focusing on the
-  cli that we are building
-</Notes>
 
 ---
 
@@ -76,137 +70,65 @@ The nitty gritty details of each component of CRA
 
 ---
 
-# What composes CRA?
+## First Step
+
+---
+
+### process.argv, anyone?
 
 <div>
   <ul>
     <Appear>
-      <li>Babel (Transpilation)</li>
-      <li>Webpack (HMR)</li>
-      <li>Linter</li>
-      <li>Tests Configured</li>
-      <li>react-scripts</li>
+      <li>🤷‍ need to leverage process.argv</li>
+      <li>Array of inputs</li>
     </Appear>
   </ul>
 </div>
 
-
 <Notes>
-  Babel - transpiles ES6 unsupported by browser to syntax the browser understands
-  ES2015+ dynamic imports, spread objects, classes async/await, typescript|flow
-
-  Webpack - minimifies, uglifies, tree shaking, bundling
-
-  Linters style-guides and avoid errors
-
-  Jest already out of the box
-
-  React-scripts (holds the app structure template and also a lot of configurations
-
-  This tools makes our life so easy in order to start a react app
-  because it does many choices for us as devs (javascript fatigue,
-  and analysis paralysis).
-</Notes>
-
-
----
-
-
-# Why create your own generator CLI?
-
-<CenteredImage height={230} width={405} src={require("file-loader!./images/angtft.gif")} />
-
-<Notes>
-  Customization to make developers life easy!
-
-  We do a lot of that at Telus.
-
-  What would happen if one of the packages has a vulnerability?
-
-  What if you want to go the extra mile and stop bundling your project with what
-  you don't need.
-
-  Eventually we come up with a standard boilerplate if we are using redux, or
-  the context api or any other lib that we add to our Created react app, and
-  copy and paste a lot of stuff... and keep in mind that a good developer is a
-  lazy developer -> we automate all the stuff that we can.
-</Notes>
-
-
----
-
-# Why create your own generator CLI?
-
-## Why not?
-
-<Notes>
-  And in all honesty. because WHY NOT!
-
-  You get to learn a ton about the underlying technology!
-
-  Babel is not only for CRA, it's also used in the CLI I built
-
-  Webpack is actually pretty cool, and if you want to optimize the size
-  of your build, well what better tool than webpack itself.
-
-  Streamline your work?
-
-  Lighten the amount of packages your custom built depends on.
-
-  Don't like CRA rules by default and always copy paste your own, build your own
-  CRA (ok this might be an overkill reason but you get the idea 😏 )
-
+  process.argv array of inputs
+  no order guaranteed
+  not organized
+  imagine guessing which array item is your command
 </Notes>
 
 ---
 
-# Time for a DEMO
-
-<CenteredImage
-  height={230}
-  width={405}
-  src={require("file-loader!./images/Igtft.gif")}
-/>
-
-<Notes>
-  do npx self-react-app
-  explore files
-</Notes>
+![it's pretty hard](https://media.giphy.com/media/y5yzypjVc9u3S/giphy.gif)
 
 ---
 
+## Enter CommanderJS
 
-# Let's see some code
+https://github.com/tj/commander.js
 
+Easily parse your process.argv and more
+
+<Notes>
+  process.argv parser => object
+</Notes>
 
 ---
 
 <CodeSurferLayout>
 
-```js title=""
-
+```js
+let packageName;
 const program = new commander.Command(packageJson.name)
   .version(packageJson.version)
-  .arguments('<project directory>')
-  .usage(`${chalk.green('<project-directory>')} [options]`)
+  .arguments("project directory")
+  .usage("project-directory [options]")
   .action((name) => {
     projectName = name;
   })
   .allowUnknownOption()
   .on('--help', () => {
-    log(`    Only ${chalk.green('<project-directory>')} is required.`);
+    log("   Only <project-directory> is required.");
     log();
   })
   .parse(process.argv);
 
-
 ```
-
-</CodeSurferLayout>
-
----
-
-<CodeSurferLayout>
 
 ```js
 
@@ -214,7 +136,49 @@ createApp(projectName);
 
 ```
 
+</CodeSurferLayout>
+
+
+---
+
+
+## We have input!
+
+We are going to need fs... extra
+
+<div>
+  <ul>
+    <Appear>
+      <li>Validate package Name</li>
+      <li>Directory, exists? create it?</li>
+    </Appear>
+  </ul>
+</div>
+
+---
+
+<CodeSurferLayout>
+
+
 ```js 1:11
+
+const createApp = (name) => {
+  // Project root directory
+  const root = path.resolve(name);
+
+  checkAppName(name);
+  fs.ensureDirSync(name);
+
+  log(`Creating a new React app in ${chalk.green(root)}.`);
+  log();
+  executeCreation(root, name);
+};
+
+createApp(projectName);
+
+```
+
+```js 5:6
 
 const createApp = (name) => {
   // Project root directory
@@ -254,6 +218,36 @@ createApp(projectName);
 
 ---
 
+## checkAppName?
+
+Let's skip that code for the sake of time!
+
+¯\\\_(ツ)_/¯
+
+validate-npm-package-name => it exists!
+
+---
+
+<Split>
+
+![what now?](https://media3.giphy.com/media/3o85xlMAbS137irXTq/giphy.gif)
+
+<div>
+  <ul>
+    <Appear>
+      <li>Create/Configure package.json</li>
+      <li>Install Packages</li>
+      <li>Setup Repository</li>
+      <li>Copy the React App Template*</li>
+    </Appear>
+  </ul>
+</div>
+
+</Split>
+
+---
+
+
 <CodeSurferLayout>
 
 ```js 11:18
@@ -291,7 +285,42 @@ const executeCreation = async (root, appName) => {
 };
 
 ```
+
 </CodeSurferLayout>
+
+
+---
+
+<Split>
+
+![it's a lot to process](https://media.giphy.com/media/j8nXhJ1fJM0wg/giphy.gif)
+
+<div>
+  <ul>
+    <Appear>
+      <li>So we gotta keep it dynamic, but how?</li>
+    </Appear>
+  </ul>
+</div>
+
+</Split>
+
+---
+
+## Show some moves!
+![make it dynamic](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRw%0D%0AOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzUwIiBoZWlnaHQ9IjE5NS4yNiI+PHJl%0D%0AY3Qgd2lkdGg9IjM1MCIgaGVpZ2h0PSIxOTUuMjYiIGNsYXNzPSJhIiByeD0iNSIgcnk9IjUiLz48%0D%0AY2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI3LjUiIGZpbGw9IiNmZjVmNTgiLz48Y2lyY2xlIGN4%0D%0APSI0NSIgY3k9IjIwIiByPSI3LjUiIGZpbGw9IiNmZmJkMmUiLz48Y2lyY2xlIGN4PSI3MCIgY3k9%0D%0AIjIwIiByPSI3LjUiIGZpbGw9IiMxOGMxMzIiLz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9y%0D%0AZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdp%0D%0AZHRoPSIzMjAiIGhlaWdodD0iMTMwLjI2IiB4PSIxNSIgeT0iNTAiIHZpZXdCb3g9IjAgMCAzMiAx%0D%0AMy4wMyI+PHN0eWxlPkBrZXlmcmFtZXMgbHswJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMzJweCl9%0D%0AMi4yJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtNjRweCl9Mi4zJXt0cmFuc2Zvcm06dHJhbnNsYXRl%0D%0AWCgtOTZweCl9NC40JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMTkycHgpfTYuNiV7dHJhbnNmb3Jt%0D%0AOnRyYW5zbGF0ZVgoLTI1NnB4KX04Ljgle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0zNTJweCl9MTAu%0D%0AOSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTQ0OHB4KX0xMy4xJXt0cmFuc2Zvcm06dHJhbnNsYXRl%0D%0AWCgtNTEycHgpfTE1LjMle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC02MDhweCl9MTcuNiV7dHJhbnNm%0D%0Ab3JtOnRyYW5zbGF0ZVgoLTcwNHB4KX0xOS43JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtODAwcHgp%0D%0AfTIxLjkle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC04OTZweCl9MjQuMSV7dHJhbnNmb3JtOnRyYW5z%0D%0AbGF0ZVgoLTk2MHB4KX0yNi4yJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMTA1NnB4KX0yOC40JXt0%0D%0AcmFuc2Zvcm06dHJhbnNsYXRlWCgtMTE1MnB4KX0zMC42JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgt%0D%0AMTIxNnB4KX0zMi43JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMTMxMnB4KX0zNC45JXt0cmFuc2Zv%0D%0Acm06dHJhbnNsYXRlWCgtMTM3NnB4KX0zNyV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTE0NzJweCl9%0D%0AMzkuMSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTE1MzZweCl9MzkuMiV7dHJhbnNmb3JtOnRyYW5z%0D%0AbGF0ZVgoLTE1NjhweCl9NDEuMyV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTE2NjRweCl9NDMuNSV7%0D%0AdHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTE3NjBweCl9NDUuNiV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgo%0D%0ALTE4NTZweCl9NDcuOCV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTE5NTJweCl9NTAle3RyYW5zZm9y%0D%0AbTp0cmFuc2xhdGVYKC0yMDQ4cHgpfTUyLjEle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0yMTEycHgp%0D%0AfTU0LjIle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0yMTc2cHgpfTU2LjMle3RyYW5zZm9ybTp0cmFu%0D%0Ac2xhdGVYKC0yMjQwcHgpfTU4LjQle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0yMzM2cHgpfTYwLjYl%0D%0Ae3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0yNDMycHgpfTYyLjgle3RyYW5zZm9ybTp0cmFuc2xhdGVY%0D%0AKC0yNDk2cHgpfTY1JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMjU2MHB4KX02Ny4yJXt0cmFuc2Zv%0D%0Acm06dHJhbnNsYXRlWCgtMjY1NnB4KX02OS40JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMjc1MnB4%0D%0AKX03MS42JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtMjg0OHB4KX03My44JXt0cmFuc2Zvcm06dHJh%0D%0AbnNsYXRlWCgtMjkxMnB4KX03NiV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTMwMDhweCl9NzguMSV7%0D%0AdHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTMwNzJweCl9ODAuMyV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgo%0D%0ALTMxMzZweCl9ODIuNSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTMyMzJweCl9ODQuNyV7dHJhbnNm%0D%0Ab3JtOnRyYW5zbGF0ZVgoLTMyOTZweCl9ODYuOSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTMzOTJw%0D%0AeCl9ODkuMSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTM0ODhweCl9OTEuMyV7dHJhbnNmb3JtOnRy%0D%0AYW5zbGF0ZVgoLTM1ODRweCl9OTMuNSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTM2ODBweCl9OTUu%0D%0ANyV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTM3NzZweCl9OTcuOSV7dHJhbnNmb3JtOnRyYW5zbGF0%0D%0AZVgoLTM4NzJweCl9fS5he2ZpbGw6IzI4MmQzNX0uZ3tmaWxsOiM2NmMyY2R9LmcsLmgsLml7Zm9u%0D%0AdC13ZWlnaHQ6NDAwO3RleHQtZGVjb3JhdGlvbjpub25lfS5oe2ZpbGw6I2I5YzBjYn0uaXtmaWxs%0D%0AOiNkYmFiNzl9PC9zdHlsZT48ZyBmb250LWZhbWlseT0iTW9uYWNvLENvbnNvbGFzLE1lbmxvLCdC%0D%0AaXRzdHJlYW0gVmVyYSBTYW5zIE1vbm8nLCdQb3dlcmxpbmUgU3ltYm9scycsbW9ub3NwYWNlIiBm%0D%0Ab250LXNpemU9IjEuNjciPjxkZWZzPjxzeW1ib2wgaWQ9IjEiPjx0ZXh0IHk9IjEuNjciIGZpbGw9%0D%0AIiNiOWMwY2IiIGZvbnQtd2VpZ2h0PSI3MDAiPm5vZGU8L3RleHQ+PHRleHQgeD0iNS4wMSIgeT0i%0D%0AMS42NyIgY2xhc3M9ImciPmV4YW1wbGUuanM8L3RleHQ+PC9zeW1ib2w+PHN5bWJvbCBpZD0iMiI+%0D%0APHRleHQgeT0iMS42NyIgY2xhc3M9ImciPuKgmTwvdGV4dD48dGV4dCB4PSIyIiB5PSIxLjY3IiBj%0D%0AbGFzcz0iaCI+TG9hZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xhc3M9Imgi%0D%0APnVuaWNvcm5zPC90ZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjMiPjx0ZXh0IHk9IjEuNjciIGNs%0D%0AYXNzPSJnIj7ioLk8L3RleHQ+PHRleHQgeD0iMiIgeT0iMS42NyIgY2xhc3M9ImgiPkxvYWRpbmc8%0D%0AL3RleHQ+PHRleHQgeD0iMTAuMDIiIHk9IjEuNjciIGNsYXNzPSJoIj51bmljb3JuczwvdGV4dD48%0D%0AL3N5bWJvbD48c3ltYm9sIGlkPSI0Ij48dGV4dCB5PSIxLjY3IiBjbGFzcz0iZyI+4qC4PC90ZXh0%0D%0APjx0ZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5Mb2FkaW5nPC90ZXh0Pjx0ZXh0IHg9IjEw%0D%0ALjAyIiB5PSIxLjY3IiBjbGFzcz0iaCI+dW5pY29ybnM8L3RleHQ+PC9zeW1ib2w+PHN5bWJvbCBp%0D%0AZD0iNSI+PHRleHQgeT0iMS42NyIgY2xhc3M9ImciPuKgvDwvdGV4dD48dGV4dCB4PSIyIiB5PSIx%0D%0ALjY3IiBjbGFzcz0iaCI+TG9hZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xh%0D%0Ac3M9ImgiPnVuaWNvcm5zPC90ZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjYiPjx0ZXh0IHk9IjEu%0D%0ANjciIGNsYXNzPSJnIj7ioLQ8L3RleHQ+PHRleHQgeD0iMiIgeT0iMS42NyIgY2xhc3M9ImgiPkxv%0D%0AYWRpbmc8L3RleHQ+PHRleHQgeD0iMTAuMDIiIHk9IjEuNjciIGNsYXNzPSJoIj51bmljb3Juczwv%0D%0AdGV4dD48L3N5bWJvbD48c3ltYm9sIGlkPSI3Ij48dGV4dCB5PSIxLjY3IiBjbGFzcz0iZyI+4qCm%0D%0APC90ZXh0Pjx0ZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5Mb2FkaW5nPC90ZXh0Pjx0ZXh0%0D%0AIHg9IjEwLjAyIiB5PSIxLjY3IiBjbGFzcz0iaCI+dW5pY29ybnM8L3RleHQ+PC9zeW1ib2w+PHN5%0D%0AbWJvbCBpZD0iOCI+PHRleHQgeT0iMS42NyIgY2xhc3M9ImciPuKgpzwvdGV4dD48dGV4dCB4PSIy%0D%0AIiB5PSIxLjY3IiBjbGFzcz0iaCI+TG9hZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42%0D%0ANyIgY2xhc3M9ImgiPnVuaWNvcm5zPC90ZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjkiPjx0ZXh0%0D%0AIHk9IjEuNjciIGNsYXNzPSJnIj7ioIc8L3RleHQ+PHRleHQgeD0iMiIgeT0iMS42NyIgY2xhc3M9%0D%0AImgiPkxvYWRpbmc8L3RleHQ+PHRleHQgeD0iMTAuMDIiIHk9IjEuNjciIGNsYXNzPSJoIj51bmlj%0D%0Ab3JuczwvdGV4dD48L3N5bWJvbD48c3ltYm9sIGlkPSIxMCI+PHRleHQgeT0iMS42NyIgY2xhc3M9%0D%0AImciPuKgjzwvdGV4dD48dGV4dCB4PSIyIiB5PSIxLjY3IiBjbGFzcz0iaCI+TG9hZGluZzwvdGV4%0D%0AdD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xhc3M9ImgiPnVuaWNvcm5zPC90ZXh0Pjwvc3lt%0D%0AYm9sPjxzeW1ib2wgaWQ9IjExIj48dGV4dCB5PSIxLjY3IiBjbGFzcz0iZyI+4qCLPC90ZXh0Pjx0%0D%0AZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5Mb2FkaW5nPC90ZXh0Pjx0ZXh0IHg9IjEwLjAy%0D%0AIiB5PSIxLjY3IiBjbGFzcz0iaCI+dW5pY29ybnM8L3RleHQ+PC9zeW1ib2w+PHN5bWJvbCBpZD0i%0D%0AMTIiPjx0ZXh0IHk9IjEuNjciIGNsYXNzPSJpIj7ioLw8L3RleHQ+PHRleHQgeD0iMiIgeT0iMS42%0D%0ANyIgY2xhc3M9ImgiPkxvYWRpbmc8L3RleHQ+PHRleHQgeD0iMTAuMDIiIHk9IjEuNjciIGNsYXNz%0D%0APSJoIj5yYWluYm93czwvdGV4dD48L3N5bWJvbD48c3ltYm9sIGlkPSIxMyI+PHRleHQgeT0iMS42%0D%0ANyIgY2xhc3M9ImkiPuKgtDwvdGV4dD48dGV4dCB4PSIyIiB5PSIxLjY3IiBjbGFzcz0iaCI+TG9h%0D%0AZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xhc3M9ImgiPnJhaW5ib3dzPC90%0D%0AZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjE0Ij48dGV4dCB5PSIxLjY3IiBjbGFzcz0iaSI+4qCm%0D%0APC90ZXh0Pjx0ZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5Mb2FkaW5nPC90ZXh0Pjx0ZXh0%0D%0AIHg9IjEwLjAyIiB5PSIxLjY3IiBjbGFzcz0iaCI+cmFpbmJvd3M8L3RleHQ+PC9zeW1ib2w+PHN5%0D%0AbWJvbCBpZD0iMTUiPjx0ZXh0IHk9IjEuNjciIGNsYXNzPSJpIj7ioKc8L3RleHQ+PHRleHQgeD0i%0D%0AMiIgeT0iMS42NyIgY2xhc3M9ImgiPkxvYWRpbmc8L3RleHQ+PHRleHQgeD0iMTAuMDIiIHk9IjEu%0D%0ANjciIGNsYXNzPSJoIj5yYWluYm93czwvdGV4dD48L3N5bWJvbD48c3ltYm9sIGlkPSIxNiI+PHRl%0D%0AeHQgeT0iMS42NyIgY2xhc3M9ImkiPuKghzwvdGV4dD48dGV4dCB4PSIyIiB5PSIxLjY3IiBjbGFz%0D%0Acz0iaCI+TG9hZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xhc3M9ImgiPnJh%0D%0AaW5ib3dzPC90ZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjE3Ij48dGV4dCB5PSIxLjY3IiBjbGFz%0D%0Acz0iaSI+4qCPPC90ZXh0Pjx0ZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5Mb2FkaW5nPC90%0D%0AZXh0Pjx0ZXh0IHg9IjEwLjAyIiB5PSIxLjY3IiBjbGFzcz0iaCI+cmFpbmJvd3M8L3RleHQ+PC9z%0D%0AeW1ib2w+PHN5bWJvbCBpZD0iMTgiPjx0ZXh0IHk9IjEuNjciIGNsYXNzPSJpIj7ioIs8L3RleHQ+%0D%0APHRleHQgeD0iMiIgeT0iMS42NyIgY2xhc3M9ImgiPkxvYWRpbmc8L3RleHQ+PHRleHQgeD0iMTAu%0D%0AMDIiIHk9IjEuNjciIGNsYXNzPSJoIj5yYWluYm93czwvdGV4dD48L3N5bWJvbD48c3ltYm9sIGlk%0D%0APSIxOSI+PHRleHQgeT0iMS42NyIgY2xhc3M9ImkiPuKgmTwvdGV4dD48dGV4dCB4PSIyIiB5PSIx%0D%0ALjY3IiBjbGFzcz0iaCI+TG9hZGluZzwvdGV4dD48dGV4dCB4PSIxMC4wMiIgeT0iMS42NyIgY2xh%0D%0Ac3M9ImgiPnJhaW5ib3dzPC90ZXh0Pjwvc3ltYm9sPjxzeW1ib2wgaWQ9IjIwIj48dGV4dCB5PSIx%0D%0ALjY3IiBjbGFzcz0iaSI+4qC5PC90ZXh0Pjx0ZXh0IHg9IjIiIHk9IjEuNjciIGNsYXNzPSJoIj5M%0D%0Ab2FkaW5nPC90ZXh0Pjx0ZXh0IHg9IjEwLjAyIiB5PSIxLjY3IiBjbGFzcz0iaCI+cmFpbmJvd3M8%0D%0AL3RleHQ+PC9zeW1ib2w+PHN5bWJvbCBpZD0iMjEiPjx0ZXh0IHk9IjEuNjciIGNsYXNzPSJpIj7i%0D%0AoLg8L3RleHQ+PHRleHQgeD0iMiIgeT0iMS42NyIgY2xhc3M9ImgiPkxvYWRpbmc8L3RleHQ+PHRl%0D%0AeHQgeD0iMTAuMDIiIHk9IjEuNjciIGNsYXNzPSJoIj5yYWluYm93czwvdGV4dD48L3N5bWJvbD48%0D%0Ac3ltYm9sIGlkPSJhIj48cGF0aCBmaWxsPSJ0cmFuc3BhcmVudCIgZD0iTTAgMGgzMnY1SDB6Ii8+%0D%0APC9zeW1ib2w+PHN5bWJvbCBpZD0iYiI+PHJlY3QgZmlsbD0iIzZmNzY4MyIvPjwvc3ltYm9sPjwv%0D%0AZGVmcz48cGF0aCBkPSJNMCAwaDMydjEzLjAzSDB6IiBjbGFzcz0iYSIvPjxnIHN0eWxlPSJhbmlt%0D%0AYXRpb24tZHVyYXRpb246My44NTM5MjMwMDAwMDAwMDM1czthbmltYXRpb24taXRlcmF0aW9uLWNv%0D%0AdW50OmluZmluaXRlO2FuaW1hdGlvbi1uYW1lOmw7YW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjpz%0D%0AdGVwcygxLGVuZCkiPjxzdmcgd2lkdGg9IjQwMDAiPjxzdmc+PHVzZSB4bGluazpocmVmPSIjYSIv%0D%0APjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjMyIj48dXNlIHhsaW5rOmhyZWY9%0D%0AIiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzIi%0D%0ALz48L3N2Zz48c3ZnIHg9IjY0Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVm%0D%0APSIjMSIvPjwvc3ZnPjxzdmcgeD0iOTYiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5r%0D%0AOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMyIvPjwvc3ZnPjxzdmcgeD0i%0D%0AMTI4Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxz%0D%0AdmcgeD0iMTYwIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwv%0D%0Ac3ZnPjxzdmcgeD0iMTkyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIj%0D%0AMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzQiLz48L3N2Zz48c3ZnIHg9IjIyNCI+PHVz%0D%0AZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjI1%0D%0ANiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIu%0D%0AMTciIHhsaW5rOmhyZWY9IiM1Ii8+PC9zdmc+PHN2ZyB4PSIyODgiPjx1c2UgeGxpbms6aHJlZj0i%0D%0AI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzMjAiPjx1c2UgeGxpbms6%0D%0AaHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzNTIiPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGlu%0D%0AazpocmVmPSIjNiIvPjwvc3ZnPjxzdmcgeD0iMzg0Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVz%0D%0AZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iNDE2Ij48dXNlIHhsaW5rOmhyZWY9IiNh%0D%0AIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iNDQ4Ij48dXNlIHhsaW5rOmhy%0D%0AZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0i%0D%0AIzciLz48L3N2Zz48c3ZnIHg9IjQ4MCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6%0D%0AaHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjUxMiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5rOmhyZWY9IiM4Ii8+PC9zdmc+PHN2%0D%0AZyB4PSI1NDQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9z%0D%0Admc+PHN2ZyB4PSI1NzYiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMx%0D%0AIi8+PC9zdmc+PHN2ZyB4PSI2MDgiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhy%0D%0AZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjOSIvPjwvc3ZnPjxzdmcgeD0iNjQw%0D%0AIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcg%0D%0AeD0iNjcyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3Zn%0D%0APjxzdmcgeD0iNzA0Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIv%0D%0APjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzEwIi8+PC9zdmc+PHN2ZyB4PSI3MzYiPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSI3Njgi%0D%0APjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4%0D%0APSI4MDAiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5%0D%0APSIyLjE3IiB4bGluazpocmVmPSIjMTEiLz48L3N2Zz48c3ZnIHg9IjgzMiI+PHVzZSB4bGluazpo%0D%0AcmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9Ijg2NCI+PHVzZSB4%0D%0AbGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9Ijg5NiI+%0D%0APHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTci%0D%0AIHhsaW5rOmhyZWY9IiMyIi8+PC9zdmc+PHN2ZyB4PSI5MjgiPjx1c2UgeGxpbms6aHJlZj0iI2Ei%0D%0ALz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSI5NjAiPjx1c2UgeGxpbms6aHJl%0D%0AZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIj%0D%0AMyIvPjwvc3ZnPjxzdmcgeD0iOTkyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpo%0D%0AcmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTAyNCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjEwNTYiPjx1c2UgeGxpbms6aHJlZj0iI2Ei%0D%0ALz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjNCIvPjwv%0D%0Ac3ZnPjxzdmcgeD0iMTA4OCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0i%0D%0AIzEiLz48L3N2Zz48c3ZnIHg9IjExMjAiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5r%0D%0AOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIxMTUyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVz%0D%0AZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzUiLz48L3N2Zz48%0D%0Ac3ZnIHg9IjExODQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+%0D%0APC9zdmc+PHN2ZyB4PSIxMjE2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVm%0D%0APSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzYiLz48L3N2Zz48c3ZnIHg9IjEyNDgi%0D%0APjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4%0D%0APSIxMjgwIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3Zn%0D%0APjxzdmcgeD0iMTMxMiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEi%0D%0ALz48dXNlIHk9IjIuMTciIHhsaW5rOmhyZWY9IiM3Ii8+PC9zdmc+PHN2ZyB4PSIxMzQ0Ij48dXNl%0D%0AIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTM3%0D%0ANiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIu%0D%0AMTciIHhsaW5rOmhyZWY9IiM4Ii8+PC9zdmc+PHN2ZyB4PSIxNDA4Ij48dXNlIHhsaW5rOmhyZWY9%0D%0AIiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTQ0MCI+PHVzZSB4bGlu%0D%0AazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjE0NzIiPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4%0D%0AbGluazpocmVmPSIjOSIvPjwvc3ZnPjxzdmcgeD0iMTUwNCI+PHVzZSB4bGluazpocmVmPSIjYSIv%0D%0APjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjE1MzYiPjx1c2UgeGxpbms6aHJl%0D%0AZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIxNTY4Ij48dXNlIHhs%0D%0AaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6%0D%0AaHJlZj0iIzEwIi8+PC9zdmc+PHN2ZyB4PSIxNjAwIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVz%0D%0AZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTYzMiI+PHVzZSB4bGluazpocmVmPSIj%0D%0AYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjE2NjQiPjx1c2UgeGxpbms6%0D%0AaHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVm%0D%0APSIjMTEiLz48L3N2Zz48c3ZnIHg9IjE2OTYiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhs%0D%0AaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIxNzI4Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+%0D%0APHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTc2MCI+PHVzZSB4bGluazpocmVm%0D%0APSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5rOmhyZWY9IiMy%0D%0AIi8+PC9zdmc+PHN2ZyB4PSIxNzkyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpo%0D%0AcmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMTgyNCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjE4NTYiPjx1c2UgeGxpbms6aHJlZj0iI2Ei%0D%0ALz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMyIvPjwv%0D%0Ac3ZnPjxzdmcgeD0iMTg4OCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0i%0D%0AIzEiLz48L3N2Zz48c3ZnIHg9IjE5MjAiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5r%0D%0AOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIxOTUyIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVz%0D%0AZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzQiLz48L3N2Zz48%0D%0Ac3ZnIHg9IjE5ODQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+%0D%0APC9zdmc+PHN2ZyB4PSIyMDE2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVm%0D%0APSIjMSIvPjwvc3ZnPjxzdmcgeD0iMjA0OCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxp%0D%0Abms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5rOmhyZWY9IiMxMiIvPjwvc3ZnPjxzdmcg%0D%0AeD0iMjA4MCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2%0D%0AZz48c3ZnIHg9IjIxMTIiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMx%0D%0AIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMTMiLz48L3N2Zz48c3ZnIHg9IjIxNDQiPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIy%0D%0AMTc2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0i%0D%0AMi4xNyIgeGxpbms6aHJlZj0iIzE0Ii8+PC9zdmc+PHN2ZyB4PSIyMjA4Ij48dXNlIHhsaW5rOmhy%0D%0AZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMjI0MCI+PHVzZSB4%0D%0AbGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5r%0D%0AOmhyZWY9IiMxNSIvPjwvc3ZnPjxzdmcgeD0iMjI3MiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjIzMDQiPjx1c2UgeGxpbms6aHJlZj0i%0D%0AI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIyMzM2Ij48dXNlIHhsaW5r%0D%0AOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJl%0D%0AZj0iIzE2Ii8+PC9zdmc+PHN2ZyB4PSIyMzY4Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4%0D%0AbGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMjQwMCI+PHVzZSB4bGluazpocmVmPSIjYSIv%0D%0APjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjI0MzIiPjx1c2UgeGxpbms6aHJl%0D%0AZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIj%0D%0AMTciLz48L3N2Zz48c3ZnIHg9IjI0NjQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5r%0D%0AOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIyNDk2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVz%0D%0AZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzE4Ii8+PC9zdmc+%0D%0APHN2ZyB4PSIyNTI4Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIv%0D%0APjwvc3ZnPjxzdmcgeD0iMjU2MCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJl%0D%0AZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5rOmhyZWY9IiMxOSIvPjwvc3ZnPjxzdmcgeD0iMjU5%0D%0AMiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3Zn%0D%0AIHg9IjI2MjQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9z%0D%0Admc+PHN2ZyB4PSIyNjU2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIj%0D%0AMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzIwIi8+PC9zdmc+PHN2ZyB4PSIyNjg4Ij48%0D%0AdXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0i%0D%0AMjcyMCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48%0D%0Ac3ZnIHg9IjI3NTIiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+%0D%0APHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMjEiLz48L3N2Zz48c3ZnIHg9IjI3ODQiPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIyODE2%0D%0AIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcg%0D%0AeD0iMjg0OCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNl%0D%0AIHk9IjIuMTciIHhsaW5rOmhyZWY9IiMxMiIvPjwvc3ZnPjxzdmcgeD0iMjg4MCI+PHVzZSB4bGlu%0D%0AazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjI5MTIiPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4%0D%0AbGluazpocmVmPSIjMTMiLz48L3N2Zz48c3ZnIHg9IjI5NDQiPjx1c2UgeGxpbms6aHJlZj0iI2Ei%0D%0ALz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIyOTc2Ij48dXNlIHhsaW5rOmhy%0D%0AZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMzAwOCI+PHVzZSB4%0D%0AbGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5r%0D%0AOmhyZWY9IiMxNCIvPjwvc3ZnPjxzdmcgeD0iMzA0MCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjMwNzIiPjx1c2UgeGxpbms6aHJlZj0i%0D%0AI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMTUi%0D%0ALz48L3N2Zz48c3ZnIHg9IjMxMDQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhy%0D%0AZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzMTM2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4%0D%0AbGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzE2Ii8+PC9zdmc+PHN2%0D%0AZyB4PSIzMTY4Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwv%0D%0Ac3ZnPjxzdmcgeD0iMzIwMCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0i%0D%0AIzEiLz48L3N2Zz48c3ZnIHg9IjMyMzIiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5r%0D%0AOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMTciLz48L3N2Zz48c3ZnIHg9%0D%0AIjMyNjQiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+%0D%0APHN2ZyB4PSIzMjk2Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIv%0D%0APjx1c2UgeT0iMi4xNyIgeGxpbms6aHJlZj0iIzE4Ii8+PC9zdmc+PHN2ZyB4PSIzMzI4Ij48dXNl%0D%0AIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMzM2%0D%0AMCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3Zn%0D%0AIHg9IjMzOTIiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVz%0D%0AZSB5PSIyLjE3IiB4bGluazpocmVmPSIjMTkiLz48L3N2Zz48c3ZnIHg9IjM0MjQiPjx1c2UgeGxp%0D%0Abms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzNDU2Ij48%0D%0AdXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0i%0D%0AMzQ4OCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9%0D%0AIjIuMTciIHhsaW5rOmhyZWY9IiMyMCIvPjwvc3ZnPjxzdmcgeD0iMzUyMCI+PHVzZSB4bGluazpo%0D%0AcmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjM1NTIiPjx1c2Ug%0D%0AeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzNTg0%0D%0AIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4x%0D%0ANyIgeGxpbms6aHJlZj0iIzIxIi8+PC9zdmc+PHN2ZyB4PSIzNjE2Ij48dXNlIHhsaW5rOmhyZWY9%0D%0AIiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMzY0OCI+PHVzZSB4bGlu%0D%0AazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjM2ODAiPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4%0D%0AbGluazpocmVmPSIjMTIiLz48L3N2Zz48c3ZnIHg9IjM3MTIiPjx1c2UgeGxpbms6aHJlZj0iI2Ei%0D%0ALz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzNzQ0Ij48dXNlIHhsaW5rOmhy%0D%0AZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMzc3NiI+PHVzZSB4%0D%0AbGluazpocmVmPSIjYSIvPjx1c2UgeGxpbms6aHJlZj0iIzEiLz48dXNlIHk9IjIuMTciIHhsaW5r%0D%0AOmhyZWY9IiMxMyIvPjwvc3ZnPjxzdmcgeD0iMzgwOCI+PHVzZSB4bGluazpocmVmPSIjYSIvPjx1%0D%0Ac2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjM4NDAiPjx1c2UgeGxpbms6aHJlZj0i%0D%0AI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PC9zdmc+PHN2ZyB4PSIzODcyIj48dXNlIHhsaW5r%0D%0AOmhyZWY9IiNhIi8+PHVzZSB4bGluazpocmVmPSIjMSIvPjx1c2UgeT0iMi4xNyIgeGxpbms6aHJl%0D%0AZj0iIzE0Ii8+PC9zdmc+PHN2ZyB4PSIzOTA0Ij48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSB4%0D%0AbGluazpocmVmPSIjMSIvPjwvc3ZnPjxzdmcgeD0iMzkzNiI+PHVzZSB4bGluazpocmVmPSIjYSIv%0D%0APjx1c2UgeGxpbms6aHJlZj0iIzEiLz48L3N2Zz48c3ZnIHg9IjM5NjgiPjx1c2UgeGxpbms6aHJl%0D%0AZj0iI2EiLz48dXNlIHhsaW5rOmhyZWY9IiMxIi8+PHVzZSB5PSIyLjE3IiB4bGluazpocmVmPSIj%0D%0AMTUiLz48L3N2Zz48L3N2Zz48L2c+PC9nPjwvc3ZnPjwvc3ZnPg==)
+
+---
+
+## Show Progress
+
+![show progress](https://cdn-images-1.medium.com/max/1600/1*K-5epSDSq0EuwGLePpOH1w.gif)
+
+---
+
+## Also errors or unicorns
+
+![show errors or unicorns](https://github.com/sindresorhus/ora/raw/master/screenshot-2.gif)
 
 ---
 
@@ -299,6 +328,22 @@ const executeCreation = async (root, appName) => {
 
 ```js
 
+const createValidPackageJson = async (appName, spinner) => {
+  spinner.start('Initializing package with npm');
+  await execAsync("cd "+ appName " && npm init -y");
+  spinner.succeed('npm init ran successfully');
+};
+```
+
+```js 2,4
+const createValidPackageJson = async (appName, spinner) => {
+  spinner.start('Initializing package with npm');
+  await execAsync("cd "+ appName " && npm init -y");
+  spinner.succeed('npm init ran successfully');
+};
+```
+
+```js 3
 const createValidPackageJson = async (appName, spinner) => {
   spinner.start('Initializing package with npm');
   await execAsync("cd "+ appName " && npm init -y");
@@ -314,6 +359,32 @@ const createValidPackageJson = async (appName, spinner) => {
 
 ```js
 
+const addPackagesAndConfigToPackageJson = async (root, spinner) => {
+  spinner.start('Adding configuration to npm package');
+  const packageLocation = "root" + "/package.json";
+  const packageJSON = await fs.readJSON(packageLocation);
+  const newPackageJSON = { ...packageJSON, scripts };
+  await fs.writeJSON(packageLocation, newPackageJSON, { spaces: 2 });
+  spinner.succeed('npm package configured');
+  return Promise.resolve();
+};
+
+```
+
+```js 2,7
+const addPackagesAndConfigToPackageJson = async (root, spinner) => {
+  spinner.start('Adding configuration to npm package');
+  const packageLocation = "root" + "/package.json";
+  const packageJSON = await fs.readJSON(packageLocation);
+  const newPackageJSON = { ...packageJSON, scripts };
+  await fs.writeJSON(packageLocation, newPackageJSON, { spaces: 2 });
+  spinner.succeed('npm package configured');
+  return Promise.resolve();
+};
+
+```
+
+```js 4,6
 const addPackagesAndConfigToPackageJson = async (root, spinner) => {
   spinner.start('Adding configuration to npm package');
   const packageLocation = "root" + "/package.json";
@@ -350,6 +421,37 @@ const npmInstallPackages = async (root, deps, isDeps, spinner) => {
 
 ```
 
+```js 2,12
+const npmInstallPackages = async (root, deps, isDeps, spinner) => {
+  spinner.info("Initializing installation of " + isDeps ? "dependencies" : "devDependencies");
+  log();
+  const args = ['install', isDeps ? '--save' : '--save-dev'].concat(deps);
+
+  const msg = isDeps ? 'dependencies installed' : 'devDependencies installed';
+  const proc = spawnSync('npm', args, { stdio: 'inherit', cwd: root });
+
+  if (proc.status !== 0) {
+    throw new Error(proc.error);
+  }
+  spinner.succeed(msg);
+};
+```
+
+```js 7
+const npmInstallPackages = async (root, deps, isDeps, spinner) => {
+  spinner.info("Initializing installation of " + isDeps ? "dependencies" : "devDependencies");
+  log();
+  const args = ['install', isDeps ? '--save' : '--save-dev'].concat(deps);
+
+  const msg = isDeps ? 'dependencies installed' : 'devDependencies installed';
+  const proc = spawnSync('npm', args, { stdio: 'inherit', cwd: root });
+
+  if (proc.status !== 0) {
+    throw new Error(proc.error);
+  }
+  spinner.succeed(msg);
+};
+```
 
 </CodeSurferLayout>
 
@@ -358,7 +460,31 @@ const npmInstallPackages = async (root, deps, isDeps, spinner) => {
 <CodeSurferLayout>
 
 ```js
+const setupRepo = async (root, spinner) => {
+  spinner.start('Copying configuration files for react');
+  const filesToCopy = [
+    'README.md',
+    'webpack.config.js',
+    '.eslintrc.js',
+    '.babelrc',
+    'gitignore',
+    'jest.config.js',
+    '.stylelintrc'
+  ];
 
+  const promises = filesToCopy.map((file) => {
+    let dst = root + "/" + file;
+    if (file === 'gitignore') {
+      dst = root + "/." file
+    }
+    return fs.copy(path.join(__dirname, "../templates/" + file), dst);
+  });
+  await Promise.all(promises);
+  spinner.succeed('Configuration files copied');
+};
+```
+
+```js 2,18,21
 const setupRepo = async (root, spinner) => {
   spinner.start('Copying configuration files for react');
   const filesToCopy = [
@@ -392,16 +518,114 @@ const setupRepo = async (root, spinner) => {
 <CodeSurferLayout>
 
 ```js
-
 const copyReactTemplateApp = async (root, appName, spinner) => {
   spinner.start('Copying React application files');
   await fs.copy(path.join(__dirname, "../templates/src"), appName+ "src");
   spinner.succeed('React codebase ready to go!');
 };
+```
 
+```js 2:4
+const copyReactTemplateApp = async (root, appName, spinner) => {
+  spinner.start('Copying React application files');
+  await fs.copy(path.join(__dirname, "../templates/src"), appName+ "src");
+  spinner.succeed('React codebase ready to go!');
+};
 ```
 
 </CodeSurferLayout>
+
+---
+
+## Are we done?
+
+<div>
+  <ul>
+    <Appear>
+      <li>Not Really!</li>
+    </Appear>
+  </ul>
+</div>
+
+
+
+---
+
+What about compatibility with older versions?
+
+<div>
+  <ul>
+    <Appear>
+      <li>Babel</li>
+    </Appear>
+  </ul>
+</div>
+
+<Notes>
+Enter Babel
+</Notes>
+
+---
+
+# Creating a Release
+
+<div>
+  <ul>
+    <Appear>
+      <li>npm publish</li>
+      <li>git tag "v0.1.1"</li>
+      <li>git push --tags</li>
+      <li>...and manually create a release in GitHub</li>
+      <CenteredImage height={230} width={405} src="https://media.giphy.com/media/10PcMWwtZSYk2k/giphy.gif" />
+    </Appear>
+  </ul>
+</div>
+
+
+---
+
+## Automatic releasing
+
+<div>
+  <ul>
+    <Appear>
+      <li>commitizen</li>
+      <li>semantic-release</li>
+      <li>Travis CI</li>
+    </Appear>
+  </ul>
+</div>
+
+---
+
+
+## Why?
+
+<div>
+  <ul>
+    <Appear>
+      <li>Why Not?</li>
+      <li>Learned about CLI tools and secrets</li>
+      <li>Can make your life easier...</li>
+      <li>...maybe someone else's</li>
+    </Appear>
+  </ul>
+</div>
+
+---
+
+# Time for a DEMO
+
+<CenteredImage
+  height={230}
+  width={405}
+  src={require("file-loader!./images/Igtft.gif")}
+/>
+
+<Notes>
+  do npx self-react-app
+  explore files
+</Notes>
 
 
 ---
@@ -413,64 +637,16 @@ SRA ~1700 packages installed
 
 CRA ~30000 packages installed
 
-
-<Notes>
-  Show generated react app
-
-  why does SRA have so many config files? how to hide them? react-scripts!
-
-  Show repo https://github.com/maumercado
-
-  All things in javascript are object,
-  even configuration files, so a lot of configuration files are
-  actually contained/controlled by react-scripts, which hides them
-  to the user but allows the project to use all those configurations
-</Notes>
-
 ---
 
-# Creating the CLI
+## CLI Tools Used
 
 <div>
   <ul>
     <Appear>
-      <li>Commanded for parsing args</li>
+      <li>Commander for parsing args</li>
       <li>Ora gives me the spinners</li>
       <li>Boxen and Chalk adds a bit more ✨</li>
-    </Appear>
-  </ul>
-</div>
-
-
----
-
-# Bundled tools
-
-<div>
-  <ul>
-    <Appear>
-      <li>Webpack 4</li>
-      <li>Reach/Router</li>
-      <li>Jest</li>
-      <li>Babel</li>
-      <li>stylinter, eslint</li>
-      <li>... and other requirements for a react app.</li>
-    </Appear>
-  </ul>
-</div>
-
-
----
-
-# Publishing
-
-<div>
-  <ul>
-    <Appear>
-      <li>Commitizen</li>
-      <li>Semantic Release</li>
-      <li>Travis CI</li>
-      <li>Add compatibility by using Babel</li>
     </Appear>
   </ul>
 </div>
