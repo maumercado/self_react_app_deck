@@ -2,7 +2,7 @@ export { future as theme } from "@mdx-deck/themes"
 import SocialFollow from "./components/Social"
 import CenteredImage from "./components/CenteredImage"
 import { Appear, Notes  } from "mdx-deck";
-import { Split } from "mdx-deck/layouts";
+import { Split, SplitRight } from "mdx-deck/layouts";
 import { CodeSurferLayout } from "code-surfer";
 const chalk = require('chalk');
 
@@ -224,7 +224,10 @@ Let's skip that code for the sake of time!
 
 ¯\\\_(ツ)_/¯
 
-validate-npm-package-name => it exists!
+<Appear>
+<li>validate-npm-package-name => it exists!</li>
+</Appear>
+
 
 ---
 
@@ -639,7 +642,9 @@ CRA ~30000 packages installed
 
 ---
 
-## CLI Tools Used
+<Split>
+
+![Tools Used](https://media.giphy.com/media/3oKIPqsXYcdjcBcXL2/giphy.gif)
 
 <div>
   <ul>
@@ -647,9 +652,32 @@ CRA ~30000 packages installed
       <li>Commander for parsing args</li>
       <li>Ora gives me the spinners</li>
       <li>Boxen and Chalk adds a bit more ✨</li>
+      <li>fs-extra for fs extra functionality</li>
     </Appear>
   </ul>
 </div>
+
+</Split>
+
+---
+
+<SplitRight>
+
+![Tools Used](https://media.giphy.com/media/3oKIPqsXYcdjcBcXL2/giphy.gif)
+
+<div>
+  <ul>
+    <Appear>
+      <li>validate-npm-package-name app name validation</li>
+      <li>child_processes for creating separate processes</li>
+      <li>Commitizen</li>
+      <li>Semantic Release</li>
+      <li>Babel/Core</li>
+    </Appear>
+  </ul>
+</div>
+
+</SplitRight>
 
 ---
 
@@ -661,7 +689,6 @@ CRA ~30000 packages installed
 - Update dependencies
 - Add webpack bundle profiler
 - Clearer README
-
 
 ---
 
